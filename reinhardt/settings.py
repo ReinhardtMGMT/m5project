@@ -55,6 +55,7 @@ MY_APPS = [
     'students'
     'subjects'
     'teachers'
+    'materias'
 ]
 
 THIRD_PARTY_APPS = [
