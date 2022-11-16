@@ -4,12 +4,10 @@ from .models import Teacher
 from addresses.serializers import AddressesSerializer
 from addresses.models import Address
 from grades.models import Grade
-from subjects.models import Subject
 from report_cards.models import ReportCard
-from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
 from django.conf import settings
-import ipdb
+from utils.helpers import get_object_or_404_custom
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -46,7 +44,9 @@ class StudentSerializer(serializers.ModelSerializer):
         address = validated_data.pop("address")
         grade_id = validated_data.pop("grade")
 
-        grade = get_object_or_404(Grade, id=grade_id)
+        grade = get_object_or_404_custom(
+            Grade, "The especified Grade was not found!", id=grade_id
+        )
 
         new_address = Address.objects.create(**address)
 
@@ -70,12 +70,14 @@ class StudentSerializer(serializers.ModelSerializer):
                 Furthermore, you'll be able to login onto our system to check grades
                 on our website at https://reinhardt-mgmt.herokuapp.com/api/login/,
                 using the following credentials:
-                check your email to access your account: https://localhost:8000/api/students/verify/{id}/
+                check your email to access your account: https://reinhardt-mgmt.herokuapp.com/api/students/verify/{id}/
 
                     Username: {username}
-                    Password: {password}""".format(**info),
+                    Password: {password}""".format(
+                    **info
+                ),
                 from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[new_student.email]
+                recipient_list=[new_student.email],
             )
 
         list_subjects = list(grade.subjects.all())
@@ -121,8 +123,7 @@ class TeacherSerializer(serializers.ModelSerializer):
 
         new_address = Address.objects.create(**address)
 
-        new_teacher = Teacher.objects.create_user(
-            **validated_data, address=new_address)
+        new_teacher = Teacher.objects.create_user(**validated_data, address=new_address)
 
         if new_teacher:
             info = {
@@ -140,12 +141,14 @@ class TeacherSerializer(serializers.ModelSerializer):
                     Furthermore, you'll be able to login onto our system on our website at
                     https://reinhardt-mgmt.herokuapp.com/api/login/, using the following
                     credentials:
-                    check your email to access your account: https://localhost:8000/api/teachers/verify/{id}/
+                    check your email to access your account: https://reinhardt-mgmt.herokuapp.com/api/teachers/verify/{id}/
 
                         Username: {username}
-                        Password: {password}""".format(**info),
+                        Password: {password}""".format(
+                    **info
+                ),
                 from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[new_teacher.email]
+                recipient_list=[new_teacher.email],
             )
 
         return new_teacher
@@ -248,3 +251,13 @@ class TeacherName(serializers.ModelSerializer):
         ]
 
         read_only_fields = ["id"]
+
+class StudentName(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = [
+            "grade",
+            "first_name",
+            "last_name",
+            "id",
+        ]

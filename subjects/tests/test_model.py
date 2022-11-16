@@ -11,7 +11,8 @@ class SubjectsTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
       cls.subject_data = {
-        "name": "testSubject"
+        "name": "testSubject",
+        "total_classes": 40
       }
 
       cls.teacher_data = {
@@ -44,7 +45,9 @@ class SubjectsTestCase(TestCase):
         self.assertIsInstance(subject, Subject)
         self.assertIsInstance(subject.id, uuid.UUID)
         self.assertEqual(subject.name, self.subject_data["name"])
+        self.assertEqual(subject.total_classes, self.subject_data["total_classes"])
         self.assertEqual(subject.teacher.id, self.teacher.id)
+        self.assertEqual(subject.total_classes, 40)
 
       
     

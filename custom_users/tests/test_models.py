@@ -30,7 +30,7 @@ class UsersModelTest(TestCase):
         self.assertEqual(student.role, "STUDENT")
         self.assertEqual(student.address.id, self.address.id)
         self.assertEqual(student.grade.id, self.grade.id)
-        self.assertTrue(student.is_active)
+        self.assertFalse(student.is_active)
         self.assertFalse(student.is_superuser)
         self.assertFalse(student.is_staff)
 
@@ -52,7 +52,7 @@ class UsersModelTest(TestCase):
         self.assertEqual(teacher.cpf, teacher_base_data["attr_mapping"]["cpf"])
         self.assertEqual(teacher.role, "TEACHER")
         self.assertEqual(teacher.address.id, self.address.id)
-        self.assertTrue(teacher.is_active)
+        self.assertFalse(teacher.is_active)
         self.assertFalse(teacher.is_superuser)
         self.assertFalse(teacher.is_staff)
     
@@ -84,7 +84,7 @@ class UsersModelTest(TestCase):
     def test_user_password_max_length(self):
         max_length = self.base_user._meta.get_field('password').max_length
 
-        self.assertEqual(max_length, 70)
+        self.assertEqual(max_length, 200)
 
     def test_user_rg_max_length(self):
         max_length = self.base_user._meta.get_field('rg').max_length
